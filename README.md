@@ -1,7 +1,8 @@
 # IGA Project - Plataforma de Cursos de Cocina
 
 ## Descripción
-IGA Project es una plataforma web moderna para una escuela de cocina que ofrece cursos en línea, recetas exclusivas y certificaciones profesionales. La plataforma está construida con JavaScript vanilla para el frontend y Laravel para el backend, proporcionando una experiencia de usuario fluida y profesional.
+IGA Project es una plataforma web moderna para una escuela de cocina que ofrece cursos en línea, recetas exclusivas y certificaciones profesionales. La plataforma está construida con JavaScript y Vite.js para el frontend y Laravel para el backend, proporcionando una experiencia de usuario fluida y profesional.
+En entornos de desarrollo el proyecto se encuentra configurado para ser levantado en Docker siguiendos los pasos incluidos en este readme.
 
 ## Características Principales
 - Catálogo de cursos de cocina
@@ -14,7 +15,7 @@ IGA Project es una plataforma web moderna para una escuela de cocina que ofrece 
 
 ## Tecnologías Utilizadas
 ### Frontend
-- JavaScript Vanilla
+- JavaScript y Vite.js
 - CSS3 con diseño responsivo
 - Vite como bundler
 - Componentes modulares
