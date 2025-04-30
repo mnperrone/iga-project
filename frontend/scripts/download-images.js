@@ -39,12 +39,12 @@ const images = [
 
 const imagesDir = path.join(__dirname, '../public/images');
 
-// Crear el directorio de imágenes si no existe
+// Verifica si el directorio existe, si no, lo crea
 if (!fs.existsSync(imagesDir)) {
   fs.mkdirSync(imagesDir, { recursive: true });
 }
 
-// Descargar cada imagen
+
 images.forEach(image => {
   const file = fs.createWriteStream(path.join(imagesDir, image.filename));
   https.get(image.url, response => {
