@@ -84,4 +84,4 @@ iga-project/
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
 ## Contacto
-Para soporte o consultas, por favor contactar a [TU_EMAIL] 
+Para soporte o consultas, por favor contactar a mnperrone@gmail.com 
