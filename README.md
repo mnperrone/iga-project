@@ -33,16 +33,33 @@ En entornos de desarrollo el proyecto se encuentra configurado para ser levantad
 - Docker y Docker Compose
 - MySQL 8.0
 
-## Instalación
+## Instalación y Configuración
 
-### Frontend
+### 1. Configuración del Entorno
+Crear un archivo `.env` en la raíz del proyecto con la siguiente configuración:
+```
+DB_DATABASE=iga_project
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 2. Levantar con Docker
+```bash
+docker-compose up -d
+```
+Esto iniciará:
+- Frontend en http://localhost:5173
+- Backend API en http://localhost:8000
+- Base de datos MySQL en localhost:3306
+
+### Frontend (desarrollo sin Docker)
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Backend
+### Backend (desarrollo sin Docker)
 ```bash
 cd backend
 composer install
@@ -50,11 +67,6 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate
 php artisan serve
-```
-
-### Docker
-```bash
-docker-compose up -d
 ```
 
 ## Estructura del Proyecto
