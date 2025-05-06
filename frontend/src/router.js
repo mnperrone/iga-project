@@ -3,7 +3,9 @@ const routes = {
   '/courses': 'CoursesView',
   '/checkout': 'CheckoutView',
   '/my-courses': 'ClientPurchasesView',
-  '/admin': 'AdminCoursesView'
+  '/admin': 'AdminView',
+  '/admin/courses': 'AdminCoursesView',
+  '/admin/purchases': 'AdminPurchasesView'
 };
 
 export function initRouter() {
@@ -14,9 +16,23 @@ export function initRouter() {
     renderView();
   }
 
+  function findMatchingRoute(path) {
+    // Primero intentamos una coincidencia exacta
+    if (routes[path]) {
+      return routes[path];
+    }
+
+    // Si no hay coincidencia exacta, buscamos la ruta más larga que coincida
+    const matchingRoute = Object.keys(routes)
+      .filter(route => path.startsWith(route))
+      .sort((a, b) => b.length - a.length)[0];
+
+    return matchingRoute ? routes[matchingRoute] : 'HomeView';
+  }
+
   function renderView() {
     const path = window.location.pathname;
-    const viewName = routes[path] || 'HomeView';
+    const viewName = findMatchingRoute(path);
     
     // Limpiar el contenido actual
     main.innerHTML = '';
@@ -24,7 +40,7 @@ export function initRouter() {
     // Cargar la vista correspondiente
     import(`./views/${viewName}.js`)
       .then(module => {
-        const view = module.default;
+        const view = module[`create${viewName}`];
         main.appendChild(view());
       })
       .catch(error => {
