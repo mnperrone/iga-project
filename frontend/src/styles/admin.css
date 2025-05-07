@@ -29,4 +29,261 @@
 
 .purchases-table td {
   color: #666;
+}
+
+/* Estilos específicos para la sección de administración */
+.admin-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.admin-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xxl);
+}
+
+.admin-header h1 {
+  color: var(--color-text);
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  padding: var(--spacing-md);
+}
+
+.admin-menu-item {
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast);
+}
+
+.admin-menu-item:hover {
+  transform: translateY(-5px);
+}
+
+.admin-menu-item h2 {
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-xl);
+}
+
+.admin-menu-item p {
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.5;
+}
+
+.admin-button {
+  display: inline-block;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.admin-button:hover {
+  background: var(--color-primary-dark);
+}
+
+/* Tablas de administración */
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table th {
+  background: var(--color-background);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-table tr:hover {
+  background: var(--color-background);
+}
+
+/* Botones de acción en tablas */
+.btn-edit,
+.btn-delete {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  border: none;
+  cursor: pointer;
+  margin-right: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.btn-edit {
+  background: var(--color-primary);
+  color: var(--color-white);
+}
+
+.btn-delete {
+  background: var(--color-danger);
+  color: var(--color-white);
+}
+
+.btn-edit:hover {
+  background: var(--color-primary-dark);
+}
+
+.btn-delete:hover {
+  background: var(--color-danger-dark);
+}
+
+/* Formularios de administración */
+.admin-form {
+  background: var(--color-white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.admin-form .form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+.admin-form label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-md);
+  transition: border-color var(--transition-fast);
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.admin-form .form-actions {
+  margin-top: var(--spacing-xl);
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  background-color: var(--color-white);
+  margin: 2rem auto;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--color-primary);
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--color-gray-600);
+}
+
+.close-modal:hover {
+  color: var(--color-danger);
+}
+
+/* Estilos para el formulario dentro del modal */
+.modal .admin-form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modal .form-group label {
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.modal .form-group input,
+.modal .form-group textarea,
+.modal .form-group select {
+  padding: 0.75rem;
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.modal .form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.modal .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.modal .btn-danger {
+  background-color: var(--color-danger);
+}
+
+.modal .btn-danger:hover {
+  background-color: var(--color-danger-dark);
 } 

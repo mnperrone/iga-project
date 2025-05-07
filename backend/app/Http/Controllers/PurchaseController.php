@@ -9,11 +9,16 @@ use App\Models\Course;
 class PurchaseController extends Controller
 {
     
-    public function index($clientId)
+    public function index()
     {
-        // Obtener las compras realizadas por un cliente específico
-        $purchases = Purchase::where('client_id', $clientId)->with('course')->get();
-        return response()->json($purchases);
+        try {
+            $purchases = Purchase::with('course')->orderBy('created_at', 'desc')->get();
+            \Log::info('Purchases found: ' . $purchases->count());
+            return response()->json(['success' => true, 'data' => $purchases]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching purchases: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
     
     public function store(Request $request)

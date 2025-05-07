@@ -3,7 +3,7 @@ export function createCourseCard(course) {
   card.className = 'course-card';
 
   const image = document.createElement('img');
-  image.src = course.image;
+  image.src = `/images/${course.image}`;
   image.alt = course.title;
   image.className = 'course-image';
 

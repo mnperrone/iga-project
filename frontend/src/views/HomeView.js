@@ -1,4 +1,4 @@
-export default function HomeView() {
+export function createHomeView() {
   const container = document.createElement('div');
   container.className = 'home';
 

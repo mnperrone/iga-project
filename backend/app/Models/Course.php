@@ -16,7 +16,10 @@ class Course extends Model
         'description',
         'price',
         'details',
-        'image'
+        'image',
+        'category',
+        'duration',
+        'level'
     ];
 
     public function purchases()

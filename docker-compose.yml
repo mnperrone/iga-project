@@ -1,3 +1,4 @@
+version: '3'
 services:
   # Servicio de base de datos
   db:
@@ -5,33 +6,31 @@ services:
     container_name: iga_db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_DATABASE: iga_db
+      MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-      - dbdata:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
 
   # Servicio de backend
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: iga_backend
-    restart: unless-stopped
-    working_dir: /var/www
     volumes:
-      - ./backend:/var/www
+      - ./backend:/var/www/html
+      - ./frontend/public/images:/var/www/html/public/images
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=iga_db
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+      - APP_DEBUG=true
     depends_on:
       - db
-    environment:
-      DB_HOST: db
-      DB_DATABASE: iga_project
-      DB_USERNAME: root
-      DB_PASSWORD: ''
 
   # Servicio de frontend
   frontend:
@@ -44,7 +43,10 @@ services:
     ports:
       - "5173:5173"
     environment:
+      - NODE_ENV=development
       - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
 
   # Servicio Nginx
   nginx:
@@ -54,10 +56,12 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./backend:/var/www
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./backend:/var/www
     depends_on:
+      - frontend
       - backend
 
 volumes:
+  mysql_data:
   dbdata: 

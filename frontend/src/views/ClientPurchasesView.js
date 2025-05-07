@@ -1,52 +1,124 @@
-import { courses } from '../data/courses.js';
+import '../styles/main.css';
 
-// Simulación de datos de compras (en un caso real, esto vendría de una API)
-const clientPurchases = [
-  {
-    id: 1,
-    courseId: 1,
-    purchaseDate: '2024-04-29',
-    progress: 75
-  },
-  {
-    id: 2,
-    courseId: 2,
-    purchaseDate: '2024-04-28',
-    progress: 30
-  }
-];
+const API_URL = import.meta.env.VITE_API_URL;
 
-export default function ClientPurchasesView() {
+export function createClientPurchasesView() {
   const container = document.createElement('div');
   container.className = 'client-purchases-view';
 
   container.innerHTML = `
     <div class="container">
-      <h1>Mis Cursos</h1>
-      
-      <div class="purchases-grid">
-        ${clientPurchases.map(purchase => {
-          const course = courses.find(c => c.id === purchase.courseId);
-          return `
-            <div class="course-card">
-              <img src="${course.image}" alt="${course.title}" class="course-image">
-              <div class="course-content">
-                <h3 class="course-title">${course.title}</h3>
-                <p class="course-description">${course.description}</p>
-                <div class="course-progress">
-                  <div class="progress-bar" style="width: ${purchase.progress}%"></div>
-                  <span class="progress-text">Progreso: ${purchase.progress}%</span>
-                </div>
-                <button class="course-button" onclick="window.navigateTo('/courses/${course.id}')">
-                  Continuar Curso
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('')}
+      <h1>Mis Compras</h1>
+      <div class="purchases-list">
+        <table class="purchases-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Curso</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="client-purchases-tbody">
+            <tr>
+              <td colspan="7">Cargando compras...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   `;
+
+  // Estilos
+  const style = document.createElement('style');
+  style.textContent = `
+    .client-purchases-view {
+      padding: 2rem;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
+    .purchases-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .purchases-table th,
+    .purchases-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    .purchases-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .purchases-table tr:hover {
+      background: #f8f9fa;
+    }
+  `;
+  container.appendChild(style);
+
+  // Cargar las compras del cliente al montar la vista
+  loadClientPurchases();
+
+  async function loadClientPurchases() {
+    try {
+      const email = localStorage.getItem('user_email');
+      if (!email) {
+        showError('No se encontró el email del usuario. Por favor, realiza una compra primero.');
+        return;
+      }
+
+      const response = await fetch(`${API_URL}/api/purchases/customer/${encodeURIComponent(email)}`);
+      if (!response.ok) {
+        throw new Error('Error al cargar tus compras');
+      }
+
+      const purchases = await response.json();
+      const tbody = container.querySelector('#client-purchases-tbody');
+
+      if (Array.isArray(purchases) && purchases.length > 0) {
+        tbody.innerHTML = purchases.map(purchase => `
+          <tr>
+            <td>${purchase.id}</td>
+            <td>${purchase.course ? purchase.course.name : 'N/A'}</td>
+            <td>${purchase.customer_name}</td>
+            <td>${purchase.customer_email}</td>
+            <td>${purchase.customer_phone}</td>
+            <td>$${purchase.amount}</td>
+            <td>${new Date(purchase.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">No tienes compras registradas.</td>
+          </tr>
+        `;
+      }
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  function showError(message) {
+    container.querySelector('#client-purchases-tbody').innerHTML = `
+      <tr>
+        <td colspan="7">Error: ${message}</td>
+      </tr>
+    `;
+  }
 
   return container;
 } 

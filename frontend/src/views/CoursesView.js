@@ -1,6 +1,6 @@
-import { courses } from '../data/courses.js';
+import { getCourses } from '../api.js';
 
-export default function CoursesView() {
+export async function createCoursesView() {
   const container = document.createElement('div');
   container.className = 'courses-view';
 
@@ -14,26 +14,38 @@ export default function CoursesView() {
   const coursesGrid = document.createElement('div');
   coursesGrid.className = 'courses-grid';
 
-  courses.forEach(course => {
-    const courseCard = document.createElement('div');
-    courseCard.className = 'course-card';
-    courseCard.innerHTML = `
-      <img src="${course.image}" alt="${course.title}" class="course-image">
-      <div class="course-content">
-        <span class="course-category">${course.category}</span>
-        <h3 class="course-title">${course.title}</h3>
-        <p class="course-description">${course.description}</p>
-        <div class="course-meta">
-          <span>${course.duration}</span>
-          <span>${course.level}</span>
+  try {
+    const courses = await getCourses();
+    
+    courses.forEach(course => {
+      console.log('Imagen del curso:', course.image);
+      const courseCard = document.createElement('div');
+      courseCard.className = 'course-card';
+      courseCard.innerHTML = `
+        <img src="/images/${course.image}" alt="${course.name}" class="course-image" onerror="this.onerror=null;this.src='/images/default.jpg';">
+        <div class="course-content">
+          <span class="course-category">${course.category || 'General'}</span>
+          <h3 class="course-title">${course.name}</h3>
+          <p class="course-description">${course.description}</p>
+          <div class="course-meta">
+            <span>${course.duration || 'No especificada'}</span>
+            <span>${course.level || 'No especificado'}</span>
+          </div>
+          <button class="course-button" onclick="window.navigateTo('/checkout?course=${course.id}')">
+            Comprar Curso
+          </button>
         </div>
-        <button class="course-button" onclick="window.navigateTo('/checkout?course=${course.id}')">
-          Comprar Curso
-        </button>
+      `;
+      coursesGrid.appendChild(courseCard);
+    });
+  } catch (error) {
+    console.error('Error al cargar los cursos:', error);
+    coursesGrid.innerHTML = `
+      <div class="error-message">
+        <p>Lo sentimos, hubo un error al cargar los cursos. Por favor, intenta de nuevo más tarde.</p>
       </div>
     `;
-    coursesGrid.appendChild(courseCard);
-  });
+  }
 
   container.appendChild(header);
   container.appendChild(coursesGrid);

@@ -1,97 +1,124 @@
 import { courses } from '../data/courses';
 
-export function renderAdminPurchases() {
+const API_URL = import.meta.env.VITE_API_URL;
+
+export function createAdminPurchasesView() {
   const container = document.createElement('div');
-  container.className = 'container';
+  container.className = 'admin-purchases-view';
 
-  const header = document.createElement('div');
-  header.className = 'header';
-  
-  const title = document.createElement('h1');
-  title.textContent = 'Panel de Administración';
-  title.className = 'page-title';
+  container.innerHTML = `
+    <div class="container">
+      <h1>Administración de Compras</h1>
+      <div class="purchases-list">
+        <table class="purchases-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Curso</th>
+              <th>Cliente</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Monto</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="purchases-tbody">
+            <tr>
+              <td colspan="7">Cargando compras...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 
-  const subtitle = document.createElement('p');
-  subtitle.textContent = 'Gestiona las compras y el estado de los cursos';
-  subtitle.className = 'page-subtitle';
+  // Estilos
+  const style = document.createElement('style');
+  style.textContent = `
+    .admin-purchases-view {
+      padding: 2rem;
+    }
 
-  header.appendChild(title);
-  header.appendChild(subtitle);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-  const statsContainer = document.createElement('div');
-  statsContainer.className = 'stats-container';
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 2rem;
+    }
 
-  const stats = [
-    { label: 'Total de Cursos', value: courses.length },
-    { label: 'Total de Ventas', value: '1,234' },
-    { label: 'Ingresos Totales', value: '$123,456' },
-    { label: 'Estudiantes Activos', value: '890' }
-  ];
+    .purchases-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
 
-  stats.forEach(stat => {
-    const statCard = document.createElement('div');
-    statCard.className = 'stat-card';
-    
-    const statValue = document.createElement('div');
-    statValue.className = 'stat-value';
-    statValue.textContent = stat.value;
-    
-    const statLabel = document.createElement('div');
-    statLabel.className = 'stat-label';
-    statLabel.textContent = stat.label;
-    
-    statCard.appendChild(statValue);
-    statCard.appendChild(statLabel);
-    statsContainer.appendChild(statCard);
-  });
+    .purchases-table th,
+    .purchases-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
 
-  const tableContainer = document.createElement('div');
-  tableContainer.className = 'table-container';
+    .purchases-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #2c3e50;
+    }
 
-  const table = document.createElement('table');
-  table.className = 'purchases-table';
+    .purchases-table tr:hover {
+      background: #f8f9fa;
+    }
+  `;
 
-  const thead = document.createElement('thead');
-  const headerRow = document.createElement('tr');
-  const headers = ['ID', 'Curso', 'Cliente', 'Fecha', 'Monto', 'Estado'];
-  
-  headers.forEach(headerText => {
-    const th = document.createElement('th');
-    th.textContent = headerText;
-    headerRow.appendChild(th);
-  });
-  
-  thead.appendChild(headerRow);
-  table.appendChild(thead);
+  container.appendChild(style);
 
-  const tbody = document.createElement('tbody');
-  
-  // Datos de ejemplo para la tabla
-  const purchases = [
-    { id: 1, course: 'Desarrollo Web Full Stack', client: 'Juan Pérez', date: '2024-04-29', amount: '$299.99', status: 'Completado' },
-    { id: 2, course: 'Machine Learning para Principiantes', client: 'María García', date: '2024-04-28', amount: '$199.99', status: 'En Progreso' },
-    { id: 3, course: 'Diseño UX/UI Avanzado', client: 'Carlos Rodríguez', date: '2024-04-27', amount: '$249.99', status: 'Completado' },
-    { id: 4, course: 'DevOps y CI/CD', client: 'Ana Martínez', date: '2024-04-26', amount: '$279.99', status: 'Pendiente' },
-    { id: 5, course: 'Blockchain y Criptomonedas', client: 'Luis Sánchez', date: '2024-04-25', amount: '$329.99', status: 'Completado' }
-  ];
+  // Cargar las compras cuando se monte la vista
+  loadPurchases();
 
-  purchases.forEach(purchase => {
-    const row = document.createElement('tr');
-    
-    Object.values(purchase).forEach(value => {
-      const td = document.createElement('td');
-      td.textContent = value;
-      row.appendChild(td);
-    });
-    
-    tbody.appendChild(row);
-  });
+  async function loadPurchases() {
+    try {
+      const response = await fetch(`${API_URL}/api/purchases`);
+      if (!response.ok) {
+        throw new Error('Error al cargar las compras');
+      }
 
-  table.appendChild(tbody);
-  tableContainer.appendChild(table);
+      const json = await response.json();
+      const purchases = json.data;
+      const tbody = container.querySelector('#purchases-tbody');
+      
+      if (Array.isArray(purchases) && purchases.length > 0) {
+        tbody.innerHTML = purchases.map(purchase => `
+          <tr>
+            <td>${purchase.id}</td>
+            <td>${purchase.course ? purchase.course.title : 'N/A'}</td>
+            <td>${purchase.customer_name}</td>
+            <td>${purchase.customer_email}</td>
+            <td>${purchase.customer_phone}</td>
+            <td>$${purchase.amount}</td>
+            <td>${new Date(purchase.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">No hay compras registradas.</td>
+          </tr>
+        `;
+      }
 
-  container.appendChild(header);
-  container.appendChild(statsContainer);
-  container.appendChild(tableContainer);
-  document.body.appendChild(container);
+    } catch (error) {
+      console.error('Error:', error);
+      container.querySelector('#purchases-tbody').innerHTML = `
+        <tr>
+          <td colspan="7">Error al cargar las compras: ${error.message}</td>
+        </tr>
+      `;
+    }
+  }
+
+  return container;
 } 

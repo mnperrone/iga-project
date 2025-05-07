@@ -1,3 +1,11 @@
+import { createHomeView } from './views/HomeView.js';
+import { createCoursesView } from './views/CoursesView.js';
+import { createCheckoutView } from './views/CheckoutView.js';
+import { createClientPurchasesView } from './views/ClientPurchasesView.js';
+import { createAdminView } from './views/AdminView.js';
+import { createAdminCoursesView } from './views/AdminCoursesView.js';
+import { createAdminPurchasesView } from './views/AdminPurchasesView.js';
+
 const routes = {
   '/': 'HomeView',
   '/courses': 'CoursesView',
@@ -6,6 +14,16 @@ const routes = {
   '/admin': 'AdminView',
   '/admin/courses': 'AdminCoursesView',
   '/admin/purchases': 'AdminPurchasesView'
+};
+
+const viewMap = {
+  HomeView: createHomeView,
+  CoursesView: createCoursesView,
+  CheckoutView: createCheckoutView,
+  ClientPurchasesView: createClientPurchasesView,
+  AdminView: createAdminView,
+  AdminCoursesView: createAdminCoursesView,
+  AdminPurchasesView: createAdminPurchasesView
 };
 
 export function initRouter() {
@@ -17,12 +35,11 @@ export function initRouter() {
   }
 
   function findMatchingRoute(path) {
-    // Primero intentamos una coincidencia exacta
+    // Coincidencia exacta
     if (routes[path]) {
       return routes[path];
     }
-
-    // Si no hay coincidencia exacta, buscamos la ruta más larga que coincida
+    // Ruta más larga que coincida
     const matchingRoute = Object.keys(routes)
       .filter(route => path.startsWith(route))
       .sort((a, b) => b.length - a.length)[0];
@@ -30,31 +47,27 @@ export function initRouter() {
     return matchingRoute ? routes[matchingRoute] : 'HomeView';
   }
 
-  function renderView() {
+  async function renderView() {
     const path = window.location.pathname;
     const viewName = findMatchingRoute(path);
-    
-    // Limpiar el contenido actual
+
     main.innerHTML = '';
-    
-    // Cargar la vista correspondiente
-    import(`./views/${viewName}.js`)
-      .then(module => {
-        const view = module[`create${viewName}`];
-        main.appendChild(view());
-      })
-      .catch(error => {
-        console.error('Error al cargar la vista:', error);
-        main.innerHTML = '<h1>Error 404 - Página no encontrada</h1>';
-      });
+
+    const view = viewMap[viewName];
+    if (typeof view === 'function') {
+      try {
+        const viewElement = await view();
+        main.appendChild(viewElement);
+      } catch (error) {
+        console.error('Error al renderizar la vista:', error);
+        main.innerHTML = '<h1>Error al cargar la página</h1>';
+      }
+    } else {
+      main.innerHTML = '<h1>Error 404 - Página no encontrada</h1>';
+    }
   }
 
-  // Manejar la navegación
   window.addEventListener('popstate', renderView);
-  
-  // Inicializar la vista
   renderView();
-
-  // Exponer la función de navegación
   window.navigateTo = navigateTo;
-} 
+}

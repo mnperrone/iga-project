@@ -1,3 +1,6 @@
+import '../styles/main.css';
+import { apiClient } from '../api';
+
 export function createAdminPurchasesView() {
   const container = document.createElement('div');
   container.className = 'admin-purchases-view';
@@ -28,74 +31,34 @@ export function createAdminPurchasesView() {
     </div>
   `;
 
-  // Estilos
-  const style = document.createElement('style');
-  style.textContent = `
-    .admin-purchases-view {
-      padding: 2rem;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      color: #2c3e50;
-      margin-bottom: 2rem;
-    }
-
-    .purchases-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .purchases-table th,
-    .purchases-table td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    .purchases-table th {
-      background: #f8f9fa;
-      font-weight: 600;
-      color: #2c3e50;
-    }
-
-    .purchases-table tr:hover {
-      background: #f8f9fa;
-    }
-  `;
-
-  container.appendChild(style);
-
   // Cargar las compras cuando se monte la vista
   loadPurchases();
 
   async function loadPurchases() {
     try {
-      const response = await fetch('http://localhost:8000/api/purchases');
-      if (!response.ok) {
-        throw new Error('Error al cargar las compras');
-      }
-
-      const purchases = await response.json();
+      const response = await apiClient.get('/purchases');
+      const purchases = response.data.data;
       const tbody = container.querySelector('#purchases-tbody');
       
-      tbody.innerHTML = purchases.map(purchase => `
-        <tr>
-          <td>${purchase.id}</td>
-          <td>${purchase.course ? purchase.course.title : 'N/A'}</td>
-          <td>${purchase.customer_name}</td>
-          <td>${purchase.customer_email}</td>
-          <td>${purchase.customer_phone}</td>
-          <td>$${purchase.amount}</td>
-          <td>${new Date(purchase.created_at).toLocaleDateString()}</td>
-        </tr>
-      `).join('');
+      if (Array.isArray(purchases)) {
+        tbody.innerHTML = purchases.map(purchase => `
+          <tr>
+            <td>${purchase.id}</td>
+            <td>${purchase.course ? purchase.course.name : 'N/A'}</td>
+            <td>${purchase.customer_name}</td>
+            <td>${purchase.customer_email}</td>
+            <td>${purchase.customer_phone}</td>
+            <td>$${purchase.amount}</td>
+            <td>${new Date(purchase.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join('');
+      } else {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">No hay compras registradas.</td>
+          </tr>
+        `;
+      }
 
     } catch (error) {
       console.error('Error:', error);

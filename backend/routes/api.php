@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +20,13 @@ use App\Http\Controllers\PurchaseController;
 // Rutas para los cursos
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{id}', [CourseController::class, 'show']);
+Route::post('/courses', [CourseController::class, 'store']);
 
 // Rutas para las compras
+Route::get('/purchases', [PurchaseController::class, 'index']);
 Route::post('/purchases', [PurchaseController::class, 'store']);
 Route::get('/purchases/customer/{email}', [PurchaseController::class, 'getCustomerPurchases']);
 Route::get('/purchases/admin', [PurchaseController::class, 'getAdminPurchases']);
+
+// Ruta para subida de imágenes
+Route::post('/upload', [UploadController::class, 'store']);
