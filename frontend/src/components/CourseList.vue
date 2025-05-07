@@ -1,6 +1,6 @@
 <template>
   <div class="course-list">
-    <h1>Cursos Gastronómicos IGA</h1>
+    <h1>Cursos Gastronómicos Culinary Academy</h1>
     <div class="courses-grid">
       <div v-for="course in courses" :key="course.id" class="course-card">
         <img :src="course.image" :alt="course.name" class="course-image">

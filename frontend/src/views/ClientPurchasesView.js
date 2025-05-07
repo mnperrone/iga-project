@@ -32,7 +32,7 @@ export function createClientPurchasesView() {
     </div>
   `;
 
-  // Estilos
+  // Estilos para la vista de compras del cliente
   const style = document.createElement('style');
   style.textContent = `
     .client-purchases-view {
@@ -69,14 +69,14 @@ export function createClientPurchasesView() {
   `;
   container.appendChild(style);
 
-  // Cargar las compras del cliente al montar la vista
+  // Cargar datos de compras al inicializar la vista
   loadClientPurchases();
 
   async function loadClientPurchases() {
     try {
       const email = localStorage.getItem('user_email');
       if (!email) {
-        showError('No se encontró el email del usuario. Por favor, realiza una compra primero.');
+        showError('No se encontró el email del usuario.');
         return;
       }
 
@@ -85,7 +85,8 @@ export function createClientPurchasesView() {
         throw new Error('Error al cargar tus compras');
       }
 
-      const purchases = await response.json();
+      const json = await response.json();
+      const purchases = json.data || json;
       const tbody = container.querySelector('#client-purchases-tbody');
 
       if (Array.isArray(purchases) && purchases.length > 0) {

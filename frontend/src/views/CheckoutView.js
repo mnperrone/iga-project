@@ -124,21 +124,21 @@ export async function createCheckoutView() {
         return;
       }
 
-      // Validar que el número de tarjeta tenga el formato correcto (4 grupos de 4 dígitos)
+      // Validar formato de tarjeta (4 grupos de 4 dígitos)
       const cardInput = form.querySelector('#card').value;
       if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardInput)) {
         alert('El número de tarjeta debe tener el formato: XXXX XXXX XXXX XXXX');
         return;
       }
 
-      // Validar fecha de vencimiento
+      // Validar formato de fecha MM/AA
       const expiry = form.querySelector('#expiry').value;
       if (!/^\d{2}\/\d{2}$/.test(expiry)) {
         alert('La fecha de vencimiento debe tener el formato MM/AA');
         return;
       }
 
-      // Validar CVV
+      // Validar longitud del CVV
       const cvv = form.querySelector('#cvv').value;
       if (cvv.length !== 3) {
         alert('El CVV debe tener 3 dígitos');

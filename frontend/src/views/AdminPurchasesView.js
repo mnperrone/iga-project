@@ -31,7 +31,7 @@ export function createAdminPurchasesView() {
     </div>
   `;
 
-  // Cargar las compras cuando se monte la vista
+  // Cargar datos de compras al inicializar la vista
   loadPurchases();
 
   async function loadPurchases() {
@@ -40,7 +40,7 @@ export function createAdminPurchasesView() {
       const purchases = response.data.data;
       const tbody = container.querySelector('#purchases-tbody');
       
-      if (Array.isArray(purchases)) {
+      if (Array.isArray(purchases) && purchases.length > 0) {
         tbody.innerHTML = purchases.map(purchase => `
           <tr>
             <td>${purchase.id}</td>
@@ -59,7 +59,6 @@ export function createAdminPurchasesView() {
           </tr>
         `;
       }
-
     } catch (error) {
       console.error('Error:', error);
       container.querySelector('#purchases-tbody').innerHTML = `

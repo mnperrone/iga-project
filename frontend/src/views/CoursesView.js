@@ -18,7 +18,6 @@ export async function createCoursesView() {
     const courses = await getCourses();
     
     courses.forEach(course => {
-      console.log('Imagen del curso:', course.image);
       const courseCard = document.createElement('div');
       courseCard.className = 'course-card';
       courseCard.innerHTML = `
