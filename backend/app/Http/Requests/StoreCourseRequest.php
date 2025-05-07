@@ -25,11 +25,10 @@ class StoreCourseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'details' => 'required|string',
             'image' => 'required|string',
             'category' => 'nullable|string|max:255',
             'duration' => 'nullable|string|max:255',
-            'level' => 'nullable|string|max:255'
+            'level' => 'nullable|string|in:Principiante,Intermedio,Avanzado'
         ];
     }
 } 

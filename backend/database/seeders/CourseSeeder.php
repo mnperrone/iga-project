@@ -19,18 +19,16 @@ class CourseSeeder extends Seeder
         try {
             Course::create([
                 'name' => 'Curso de Cocina Italiana',
-                'description' => 'Aprende a cocinar platos italianos clásicos.',
+                'description' => 'Aprende a cocinar platos italianos clásicos. Incluye recetas de pasta, pizza y postres.',
                 'price' => 50.00,
-                'details' => 'Incluye recetas de pasta, pizza y postres.',
                 'image' => 'italian-cooking.jpg',
             ]);
             Log::info('Primer curso creado exitosamente');
         
             Course::create([
                 'name' => 'Curso de Pastelería',
-                'description' => 'Domina las técnicas de pastelería.',
+                'description' => 'Domina las técnicas de pastelería. Incluye recetas de tartas, galletas y más.',
                 'price' => 70.00,
-                'details' => 'Incluye recetas de tartas, galletas y más.',
                 'image' => 'baking.jpg',
             ]);
             Log::info('Segundo curso creado exitosamente');

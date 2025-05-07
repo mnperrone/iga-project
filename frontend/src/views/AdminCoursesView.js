@@ -113,12 +113,12 @@ export async function createAdminCoursesView() {
             <input type="text" id="name" name="name" required>
           </div>
           <div class="form-group">
-            <label for="description">Descripción</label>
-            <textarea id="description" name="description" required></textarea>
+            <label for="description">Descripción del Curso</label>
+            <textarea id="description" name="description" required placeholder="Describe el curso, incluyendo qué aprenderá el estudiante y qué incluye el curso..."></textarea>
           </div>
           <div class="form-group">
             <label for="category">Categoría</label>
-            <input type="text" id="category" name="category" required>
+            <input type="text" id="category" name="category">
           </div>
           <div class="form-group">
             <label for="duration">Duración</label>
@@ -274,45 +274,48 @@ export async function createAdminCoursesView() {
     const formData = new FormData(form);
     const imageFile = formData.get('image');
     
-    // Crear un nombre único para la imagen
-    const imageName = `${Date.now()}-${imageFile.name}`;
+    // Primero subir la imagen
+    const imageFormData = new FormData();
+    imageFormData.append('image', imageFile);
+    
+    const imageResponse = await fetch(`${API_URL}/api/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: imageFormData
+    });
+
+    if (!imageResponse.ok) {
+      throw new Error('Error al subir la imagen');
+    }
+
+    const imageData = await imageResponse.json();
     
     // Crear el objeto de datos del curso
     const courseData = {
       name: formData.get('name'),
       description: formData.get('description'),
-      category: formData.get('category'),
-      duration: formData.get('duration'),
-      level: formData.get('level'),
       price: parseFloat(formData.get('price')),
-      image: `/images/${imageName}`
+      image: imageData.filename,
+      category: formData.get('category') || null,
+      duration: formData.get('duration') || null,
+      level: formData.get('level') || null
     };
 
     try {
-      // Primero subir la imagen
-      const imageFormData = new FormData();
-      imageFormData.append('image', imageFile);
-      
-      const imageResponse = await fetch(`${API_URL}/api/upload`, {
-        method: 'POST',
-        body: imageFormData
-      });
-
-      if (!imageResponse.ok) {
-        throw new Error('Error al subir la imagen');
-      }
-
       // Luego crear el curso
       const response = await fetch(`${API_URL}/api/courses`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(courseData)
       });
 
       if (!response.ok) {
-        throw new Error('Error al crear el curso');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al crear el curso');
       }
 
       // Recargar la página para mostrar el nuevo curso
