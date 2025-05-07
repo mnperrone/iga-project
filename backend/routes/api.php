@@ -21,6 +21,8 @@ use App\Http\Controllers\UploadController;
 Route::get('/courses', [CourseController::class, 'index']);
 Route::get('/courses/{id}', [CourseController::class, 'show']);
 Route::post('/courses', [CourseController::class, 'store']);
+Route::put('/courses/{id}', [CourseController::class, 'update']);
+Route::delete('/courses/{id}', [CourseController::class, 'destroy']);
 
 // Rutas para las compras
 Route::get('/purchases', [PurchaseController::class, 'index']);

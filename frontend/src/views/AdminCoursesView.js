@@ -66,9 +66,17 @@ export async function createAdminCoursesView() {
       const actionsCell = document.createElement('td');
       actionsCell.innerHTML = `
         <img src="/images/${course.image}" alt="${course.name}" style="width: 50px; height: 50px; object-fit: cover;">
-        <button class="btn-edit" onclick="editCourse(${course.id})">Editar</button>
-        <button class="btn-delete" onclick="deleteCourse(${course.id})">Eliminar</button>
+        <button class="btn-edit" data-course-id="${course.id}">Editar</button>
+        <button class="btn-delete" data-course-id="${course.id}">Eliminar</button>
       `;
+
+      // Agregar event listeners a los botones
+      const editButton = actionsCell.querySelector('.btn-edit');
+      const deleteButton = actionsCell.querySelector('.btn-delete');
+
+      editButton.addEventListener('click', () => editCourse(course));
+      deleteButton.addEventListener('click', () => handleDeleteClick(course.id));
+
       row.appendChild(actionsCell);
       
       tbody.appendChild(row);
@@ -247,6 +255,28 @@ export async function createAdminCoursesView() {
   document.head.appendChild(style);
   container.appendChild(modal);
 
+  // Modal de confirmación para eliminar
+  const confirmModal = document.createElement('div');
+  confirmModal.className = 'modal';
+  confirmModal.style.display = 'none';
+  confirmModal.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Confirmar Eliminación</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar este curso? Esta acción no se puede deshacer.</p>
+        <div class="form-actions">
+          <button type="button" class="btn btn-danger" id="cancel-delete">Cancelar</button>
+          <button type="button" class="btn" id="confirm-delete">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  container.appendChild(confirmModal);
+
   // Funciones para manejar el modal
   window.showAddCourseModal = () => {
     modal.style.display = 'flex';
@@ -324,6 +354,152 @@ export async function createAdminCoursesView() {
       alert('Error al crear el curso: ' + error.message);
     }
   };
+
+  // Funciones para editar y eliminar cursos
+  async function editCourse(course) {
+    // Llenar el formulario con los datos del curso
+    const form = modal.querySelector('#add-course-form');
+    form.querySelector('#name').value = course.name;
+    form.querySelector('#description').value = course.description;
+    form.querySelector('#category').value = course.category || '';
+    form.querySelector('#duration').value = course.duration || '';
+    form.querySelector('#level').value = course.level || 'Principiante';
+    form.querySelector('#price').value = course.price;
+    
+    // El campo de imagen lo dejamos vacío ya que es un archivo
+    form.querySelector('#image').required = false;
+
+    // Modificar el comportamiento del formulario para actualizar en lugar de crear
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const courseData = {
+        name: formData.get('name'),
+        description: formData.get('description'),
+        price: parseFloat(formData.get('price')),
+        category: formData.get('category') || null,
+        duration: formData.get('duration') || null,
+        level: formData.get('level') || null
+      };
+
+      // Si se seleccionó una nueva imagen, subirla primero
+      if (formData.get('image').size > 0) {
+        const imageFile = formData.get('image');
+        const imageFormData = new FormData();
+        imageFormData.append('image', imageFile);
+        
+        try {
+          const imageResponse = await fetch(`${API_URL}/api/upload`, {
+            method: 'POST',
+            credentials: 'include',
+            body: imageFormData
+          });
+
+          if (!imageResponse.ok) {
+            throw new Error('Error al subir la imagen');
+          }
+
+          const imageData = await imageResponse.json();
+          courseData.image = imageData.filename;
+        } catch (error) {
+          alert('Error al subir la imagen: ' + error.message);
+          return;
+        }
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/courses/${course.id}`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(courseData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Error al actualizar el curso');
+        }
+
+        window.location.reload();
+      } catch (error) {
+        alert('Error al actualizar el curso: ' + error.message);
+      }
+    };
+
+    // Mostrar el modal
+    modal.style.display = 'flex';
+  }
+
+  // Funciones para manejar el modal de confirmación
+  window.showConfirmModal = (courseId) => {
+    confirmModal.style.display = 'flex';
+    
+    // Configurar los botones
+    const cancelButton = confirmModal.querySelector('#cancel-delete');
+    const confirmButton = confirmModal.querySelector('#confirm-delete');
+    const closeButton = confirmModal.querySelector('.close-modal');
+
+    // Limpiar event listeners previos
+    const newCancelButton = cancelButton.cloneNode(true);
+    const newConfirmButton = confirmButton.cloneNode(true);
+    const newCloseButton = closeButton.cloneNode(true);
+    
+    cancelButton.parentNode.replaceChild(newCancelButton, cancelButton);
+    confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
+    closeButton.parentNode.replaceChild(newCloseButton, closeButton);
+
+    // Agregar nuevos event listeners
+    newCancelButton.onclick = () => {
+      confirmModal.style.display = 'none';
+    };
+
+    newConfirmButton.onclick = async () => {
+      confirmModal.style.display = 'none';
+      await deleteCourse(courseId);
+    };
+
+    newCloseButton.onclick = () => {
+      confirmModal.style.display = 'none';
+    };
+  };
+
+  // Cerrar modal al hacer clic fuera del contenido
+  confirmModal.onclick = (e) => {
+    if (e.target === confirmModal) {
+      confirmModal.style.display = 'none';
+    }
+  };
+
+  async function deleteCourse(courseId) {
+    try {
+      const response = await fetch(`${API_URL}/api/courses/${courseId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error al eliminar el curso');
+      }
+
+      // Recargar la página para mostrar los cambios
+      window.location.reload();
+    } catch (error) {
+      alert('Error al eliminar el curso: ' + error.message);
+    }
+  }
+
+  // Modificar la función que se llama al hacer clic en el botón de eliminar
+  async function handleDeleteClick(courseId) {
+    window.showConfirmModal(courseId);
+  }
 
   return container;
 } 

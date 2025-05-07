@@ -60,19 +60,50 @@ export async function createCheckoutView() {
             </div>
 
             <div class="form-group">
+              <label for="phone">Teléfono</label>
+              <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" placeholder="Ej: 1234567890">
+              <small class="form-text">Ingresa tu número de teléfono sin espacios ni guiones</small>
+            </div>
+
+            <div class="form-group">
               <label for="card">Número de tarjeta</label>
-              <input type="text" id="card" name="card" required>
+              <input type="text" 
+                     id="card" 
+                     name="card" 
+                     required 
+                     pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}"
+                     maxlength="19"
+                     placeholder="1234 5678 9012 3456"
+                     oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim()"
+                     onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+              <small class="form-text">Ingresa los 16 dígitos de tu tarjeta</small>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="expiry">Fecha de vencimiento</label>
-                <input type="text" id="expiry" name="expiry" placeholder="MM/AA" required>
+                <input type="text" 
+                       id="expiry" 
+                       name="expiry" 
+                       placeholder="MM/AA" 
+                       required
+                       maxlength="5"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(.{2})/, '$1/')"
+                       onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                <small class="form-text">Formato: MM/AA</small>
               </div>
 
               <div class="form-group">
                 <label for="cvv">CVV</label>
-                <input type="text" id="cvv" name="cvv" required>
+                <input type="text" 
+                       id="cvv" 
+                       name="cvv" 
+                       required
+                       maxlength="3"
+                       pattern="[0-9]{3}"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                       onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                <small class="form-text">3 dígitos de seguridad</small>
               </div>
             </div>
 
@@ -86,12 +117,40 @@ export async function createCheckoutView() {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      // Validar número de tarjeta
+      const cardNumber = form.querySelector('#card').value.replace(/\s/g, '');
+      if (cardNumber.length !== 16) {
+        alert('El número de tarjeta debe tener 16 dígitos');
+        return;
+      }
+
+      // Validar que el número de tarjeta tenga el formato correcto (4 grupos de 4 dígitos)
+      const cardInput = form.querySelector('#card').value;
+      if (!/^\d{4} \d{4} \d{4} \d{4}$/.test(cardInput)) {
+        alert('El número de tarjeta debe tener el formato: XXXX XXXX XXXX XXXX');
+        return;
+      }
+
+      // Validar fecha de vencimiento
+      const expiry = form.querySelector('#expiry').value;
+      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+        alert('La fecha de vencimiento debe tener el formato MM/AA');
+        return;
+      }
+
+      // Validar CVV
+      const cvv = form.querySelector('#cvv').value;
+      if (cvv.length !== 3) {
+        alert('El CVV debe tener 3 dígitos');
+        return;
+      }
+      
       const formData = new FormData(form);
       const purchaseData = {
         course_id: courseId,
         customer_name: formData.get('name'),
         customer_email: formData.get('email'),
-        customer_phone: '123456789', // Por ahora hardcodeado, deberías agregar un campo para el teléfono
+        customer_phone: formData.get('phone'),
         amount: course.price
       };
 

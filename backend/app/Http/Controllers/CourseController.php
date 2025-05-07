@@ -25,7 +25,27 @@ class CourseController extends Controller
     public function store(StoreCourseRequest $request)
     {
         $course = Course::create($request->validated());
-
         return response()->json($course, 201);
+    }
+
+    public function update(StoreCourseRequest $request, $id)
+    {
+        $course = Course::findOrFail($id);
+        $course->update($request->validated());
+        return response()->json($course);
+    }
+
+    public function destroy($id)
+    {
+        $course = Course::findOrFail($id);
+        
+        // Eliminar la imagen si existe
+        $imagePath = public_path('images/' . $course->image);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+        
+        $course->delete();
+        return response()->json(['message' => 'Curso eliminado correctamente']);
     }
 }

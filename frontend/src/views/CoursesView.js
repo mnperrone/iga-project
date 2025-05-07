@@ -31,6 +31,9 @@ export async function createCoursesView() {
             <span>${course.duration || 'No especificada'}</span>
             <span>${course.level || 'No especificado'}</span>
           </div>
+          <div class="course-price">
+            <span class="price">$${parseFloat(course.price).toFixed(2)}</span>
+          </div>
           <button class="course-button" onclick="window.navigateTo('/checkout?course=${course.id}')">
             Comprar Curso
           </button>
