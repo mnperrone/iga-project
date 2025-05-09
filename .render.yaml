@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: iga-backend
+    env: php
+    buildCommand: composer install
+    startCommand: php artisan serve --host=0.0.0.0
+    envVars:
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        value: iga-db
+      - key: DB_PORT
+        value: 3306
+      - key: DB_DATABASE
+        value: iga_db
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: ""
+      - key: APP_DEBUG
+        value: false
+      - key: APP_ENV
+        value: production
+
+  - type: web
+    name: iga-frontend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run dev
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_API_URL
+        value: https://iga-backend.onrender.com
+
+  - type: database
+    name: iga-db
+    databaseName: iga_db
+    databaseType: mysql
+    disk: 10
+    plan: free
