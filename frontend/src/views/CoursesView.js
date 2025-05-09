@@ -16,12 +16,16 @@ export async function createCoursesView() {
 
   try {
     const courses = await getCourses();
-    
+
     courses.forEach(course => {
       const courseCard = document.createElement('div');
       courseCard.className = 'course-card';
+
+      // Ajustar la ruta de la imagen
+      const imagePath = `/images/${course.image}`;
+
       courseCard.innerHTML = `
-        <img src="/images/${course.image}" alt="${course.name}" class="course-image" onerror="this.onerror=null;this.src='/images/default.jpg';">
+        <img src="${imagePath}" alt="${course.name}" class="course-image">
         <div class="course-content">
           <span class="course-category">${course.category || 'General'}</span>
           <h3 class="course-title">${course.name}</h3>

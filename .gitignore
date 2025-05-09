@@ -39,6 +39,7 @@ yarn-error.log*
 # Laravel specific
 /public/build
 /public/hot
+backend/public/storage
 /public/storage
 /storage/*.key
 /vendor
