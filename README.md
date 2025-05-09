@@ -1,30 +1,38 @@
 # IGA Project - Plataforma de Cursos de Cocina
 
 ## Descripción
-IGA Project es una plataforma web moderna para una escuela de cocina que ofrece cursos en línea, recetas exclusivas y certificaciones profesionales. La plataforma está construida con JavaScript y Vite.js para el frontend y Laravel para el backend, proporcionando una experiencia de usuario fluida y profesional.
-En entornos de desarrollo el proyecto se encuentra configurado para ser levantado en Docker siguiendos los pasos incluidos en este readme.
+IGA Project es una plataforma web moderna diseñada para una escuela de cocina que ofrece una experiencia completa para estudiantes y administradores. La plataforma permite a los usuarios explorar cursos, inscribirse, acceder a recetas exclusivas y obtener certificaciones profesionales. Además, incluye herramientas avanzadas para la gestión de cursos y compras, todo con un enfoque en la facilidad de uso y la escalabilidad.
+
+## Beneficios Clave
+- **Acceso a Cursos de Cocina**: Los usuarios pueden explorar un catálogo diverso de cursos, desde cocina básica hasta especialidades como repostería y cocina internacional.
+- **Gestión Simplificada**: Los administradores pueden gestionar cursos, estudiantes y compras desde un panel centralizado.
+- **Clases en Vivo**: La integración de clases en vivo permite una experiencia de aprendizaje interactiva y en tiempo real.
+- **Certificaciones Profesionales**: Los estudiantes pueden obtener certificaciones que validan sus habilidades culinarias.
+- **Sistema de Pagos Seguro**: La integración de pagos asegura transacciones rápidas y confiables.
+- **Escalabilidad**: La arquitectura basada en Docker permite un despliegue rápido y escalable en diferentes entornos.
 
 ## Características Principales
-- Catálogo de cursos de cocina
-- Sistema de inscripción y gestión de cursos
-- Clases en vivo
-- Recetas exclusivas
-- Sistema de certificaciones
-- Panel de administración
-- Sistema de pagos integrado
+- Catálogo de cursos de cocina con imágenes y descripciones detalladas.
+- Sistema de inscripción y gestión de cursos.
+- Clases en vivo para una experiencia interactiva.
+- Recetas exclusivas disponibles para los estudiantes.
+- Sistema de certificaciones para validar habilidades.
+- Panel de administración para gestionar cursos, usuarios y compras.
+- Sistema de pagos integrado para facilitar transacciones.
+- Arquitectura modular para facilitar el mantenimiento y la expansión.
 
 ## Tecnologías Utilizadas
 ### Frontend
-- JavaScript y Vite.js
-- CSS3 con diseño responsivo
-- Vite como bundler
-- Componentes modulares
+- **JavaScript y Vite.js**: Para una experiencia de usuario rápida y moderna.
+- **Vite.js como bundler**: Vite.js se utiliza como bundler para el frontend, ofreciendo tiempos de inicio rápidos y una experiencia de desarrollo fluida gracias a su servidor de desarrollo basado en ES Modules. Además, proporciona Hot Module Replacement (HMR) para actualizaciones instantáneas en el navegador y utiliza Rollup para generar paquetes optimizados en producción.
+- **CSS3 con diseño responsivo**: Adaptado a dispositivos móviles y de escritorio.
+- **Componentes modulares**: Para un desarrollo más organizado y reutilizable.
 
 ### Backend
-- Laravel 10
-- MySQL
-- PHP 8.2
-- Docker
+- **Laravel 10**: Framework robusto para la gestión de la lógica del servidor.
+- **MySQL**: Base de datos relacional para almacenar información de cursos, usuarios y compras.
+- **PHP 8.2**: Para un rendimiento óptimo y compatibilidad con Laravel.
+- **Docker**: Para un entorno de desarrollo y producción consistente.
 
 ## Requisitos del Sistema
 - Node.js 16+
@@ -87,14 +95,14 @@ iga-project/
 ```
 
 ## Contribución
-1. Fork el proyecto
-2. Crea tu rama de características (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+1. Fork el proyecto.
+2. Crea tu rama de características (`git checkout -b feature/AmazingFeature`).
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`).
+4. Push a la rama (`git push origin feature/AmazingFeature`).
+5. Abre un Pull Request.
 
 ## Licencia
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
 ## Contacto
-Para soporte o consultas, por favor contactar a mnperrone@gmail.com 
+Para soporte o consultas, por favor contactar a mnperrone@gmail.com.
